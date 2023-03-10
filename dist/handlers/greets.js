@@ -27,34 +27,17 @@ const handleGreets = async (member, bot, mode) => {
 };
 exports.handleGreets = handleGreets;
 const greetsCommand = async (interaction, bot, mode) => {
-    if (mode == 'goodbye') {
-        await bot.db.greets.upsert({
-            where: { guild: interaction.guildId },
-            update: {
-                goodbyechannel: interaction.options.getChannel('channel').id,
-                goodbyecontent: interaction.options.getString('content')
-            },
-            create: {
-                guild: interaction.guildId,
-                goodbyechannel: interaction.options.getChannel('channel').id,
-                goodbyecontent: interaction.options.getString('content')
-            }
-        });
-    }
-    else {
-        await bot.db.greets.upsert({
-            where: { guild: interaction.guildId },
-            update: {
-                welcomechannel: interaction.options.getChannel('channel').id,
-                welcomecontent: interaction.options.getString('content')
-            },
-            create: {
-                guild: interaction.guildId,
-                welcomechannel: interaction.options.getChannel('channel').id,
-                welcomecontent: interaction.options.getString('content')
-            }
-        });
-    }
+    let data = {};
+    data[`${mode}content`] = interaction.options.getString('content');
+    data[`${mode}channel`] = interaction.options.getChannel('channel').id;
+    let data2 = { guild: interaction.guildId };
+    data2[`${mode}content`] = data[`${mode}content`];
+    data2[`${mode}channel`] = data[`${mode}channel`];
+    await bot.db.greets.upsert({
+        where: { guild: interaction.guildId },
+        update: data,
+        create: data2
+    });
     const embed = new discord_js_1.EmbedBuilder()
         .setTitle("Setup Complete")
         .setDescription("Greeting message setup complete!")
