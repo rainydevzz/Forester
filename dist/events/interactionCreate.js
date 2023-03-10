@@ -15,7 +15,7 @@ const run = async (interaction, bot) => {
                 .setTitle("Uh Oh, Error!")
                 .setDescription(`\`\`\`\n${err.message}\`\`\``)
                 .setColor("Red");
-            logger_1.logger.error(err);
+            logger_1.logger.error({ ERROR: err });
             await interaction.followUp({ embeds: [embed] });
         }
     }

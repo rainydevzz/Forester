@@ -13,7 +13,7 @@ export const run = async (interaction: BaseInteraction, bot: MyClient) => {
                 .setTitle("Uh Oh, Error!")
                 .setDescription(`\`\`\`\n${err.message}\`\`\``)
                 .setColor("Red");
-            logger.error(err);
+            logger.error({ERROR: err});
             await interaction.followUp({embeds: [embed]});
         }
     }
