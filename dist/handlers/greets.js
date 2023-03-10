@@ -22,7 +22,8 @@ const handleGreets = async (member, bot, mode) => {
         .setTitle(`Goodbye, ${member.guild.name}, ${member.user.tag}`)
         .setDescription(res[`${mode}content`])
         .setTimestamp(new Date())
-        .setColor(color);
+        .setColor(color)
+        .setThumbnail(`${member.avatarURL()}`);
     await channel.send({ embeds: [embed] });
 };
 exports.handleGreets = handleGreets;
