@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.name = void 0;
 const discord_js_1 = require("discord.js");
+const logger_1 = require("../utils/logger");
 exports.name = 'interactionCreate';
 const run = async (interaction, bot) => {
     if (interaction.isChatInputCommand()) {
@@ -14,7 +15,7 @@ const run = async (interaction, bot) => {
                 .setTitle("Uh Oh, Error!")
                 .setDescription(`\`\`\`\n${err.message}\`\`\``)
                 .setColor("Red");
-            console.error(err);
+            logger_1.logger.error(err);
             await interaction.followUp({ embeds: [embed] });
         }
     }

@@ -11,7 +11,6 @@ new MyClient({
         Partials.GuildMember
     ]
 })
-.collectCommands()[1]
 .collectEvents()
 .handleEvents()
 .login(process.env.TOKEN);

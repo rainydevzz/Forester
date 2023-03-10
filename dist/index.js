@@ -14,7 +14,6 @@ new bot_1.MyClient({
         discord_js_1.Partials.GuildMember
     ]
 })
-    .collectCommands()[1]
     .collectEvents()
     .handleEvents()
     .login(process.env.TOKEN);

@@ -3,6 +3,7 @@ declare global {
         interface ProcessEnv {
             TOKEN: string;
             DB_URL: string;
+            OWNERS: string;
         }
     }
 }

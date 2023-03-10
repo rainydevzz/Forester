@@ -3,6 +3,7 @@ import { readdirSync, lstatSync } from 'fs';
 import path from 'path';
 import { EventOptions } from './types';
 import { PrismaClient } from '@prisma/client';
+import { logger } from './utils/logger';
 
 export class MyClient extends Client {
 
@@ -12,7 +13,7 @@ export class MyClient extends Client {
 
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
-        console.log(`Synced ${this.commands.size} base commands!`);
+        logger.info({COMMANDS: `Synced All Commands!`});
     }
 
     collectCommands(): [ApplicationCommandData[], this] {
@@ -36,6 +37,7 @@ export class MyClient extends Client {
                 this.commands.set(command.name, run);
             }
         }
+        logger.info({COMMANDS: "Collected all commands!"});
         return [cmds, this];
     }
 
@@ -48,6 +50,7 @@ export class MyClient extends Client {
             eventList.push({name: data.name, run: data.run});
         }
         this.events = eventList;
+        logger.info({EVENTS: "Collected All Events!"});
         return this;
     }
 
@@ -56,6 +59,11 @@ export class MyClient extends Client {
             this.on(e.name, (...args: any[]) => e.run(...args, this))
         }
         return this;
+    }
+
+    isOwner(id: string) {
+        const owners = process.env.OWNERS.split(' ');
+        return owners.includes(id);
     }
 
     debug() {

@@ -1,4 +1,5 @@
 import { BaseInteraction, EmbedBuilder } from "discord.js";
+import { logger } from "../utils/logger";
 import { MyClient } from "../bot";
 
 export const name = 'interactionCreate';
@@ -12,7 +13,7 @@ export const run = async (interaction: BaseInteraction, bot: MyClient) => {
             .setTitle("Uh Oh, Error!")
             .setDescription(`\`\`\`\n${err.message}\`\`\``)
             .setColor("Red");
-            console.error(err);
+            logger.error(err);
             await interaction.followUp({embeds: [embed]});
         }
     }

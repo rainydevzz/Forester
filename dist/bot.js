@@ -8,13 +8,14 @@ const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const client_1 = require("@prisma/client");
+const logger_1 = require("./utils/logger");
 class MyClient extends discord_js_1.Client {
     commands = new Map();
     events;
     db = new client_1.PrismaClient();
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
-        console.log(`Synced ${this.commands.size} base commands!`);
+        logger_1.logger.info({ COMMANDS: `Synced All Commands!` });
     }
     collectCommands() {
         let cmds = [];
@@ -39,6 +40,7 @@ class MyClient extends discord_js_1.Client {
                 this.commands.set(command.name, run);
             }
         }
+        logger_1.logger.info({ COMMANDS: "Collected all commands!" });
         return [cmds, this];
     }
     collectEvents() {
@@ -50,6 +52,7 @@ class MyClient extends discord_js_1.Client {
             eventList.push({ name: data.name, run: data.run });
         }
         this.events = eventList;
+        logger_1.logger.info({ EVENTS: "Collected All Events!" });
         return this;
     }
     handleEvents() {
@@ -57,6 +60,10 @@ class MyClient extends discord_js_1.Client {
             this.on(e.name, (...args) => e.run(...args, this));
         }
         return this;
+    }
+    isOwner(id) {
+        const owners = process.env.OWNERS.split(' ');
+        return owners.includes(id);
     }
     debug() {
         console.log(this.events);
