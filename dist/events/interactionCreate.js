@@ -19,5 +19,8 @@ const run = async (interaction, bot) => {
             await interaction.followUp({ embeds: [embed] });
         }
     }
+    if (interaction.isContextMenuCommand()) {
+        await bot.commands.get(interaction.commandName)(interaction);
+    }
 };
 exports.run = run;

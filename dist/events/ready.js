@@ -7,5 +7,6 @@ const run = async (bot) => {
     logger_1.logger.info({ READY: `Ready as ${bot.user.tag}` });
     await bot.syncCommands();
     await bot.db.$connect();
+    bot.debug();
 };
 exports.run = run;
