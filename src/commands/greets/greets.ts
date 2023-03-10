@@ -1,7 +1,6 @@
 import { ApplicationCommandData, ChatInputCommandInteraction, ApplicationCommandType, ApplicationCommandOptionType, ChannelType, EmbedBuilder } from "discord.js";
 import { MyClient } from "../../bot";
-import { goodbye } from "./sub/goodbye";
-import { welcome } from "./sub/welcome";
+import { greetsCommand } from "../../handlers/greets";
 
 export const command: ApplicationCommandData = {
     name: 'greets',
@@ -57,15 +56,15 @@ export const run = async (interaction: ChatInputCommandInteraction, bot: MyClien
 
     switch(sub) {
         case 'welcome': {
-            data = await welcome(interaction, bot);
+            data = await greetsCommand(interaction, bot, 'welcome');
             break;
         }
-
         case 'goodbye': {
-            data = await goodbye(interaction, bot);
+            data = await greetsCommand(interaction, bot, 'goodbye');
             break;
         }
     }
+
 
     await interaction.followUp({embeds: [data]});
 }

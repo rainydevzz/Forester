@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.command = void 0;
 const discord_js_1 = require("discord.js");
-const goodbye_1 = require("./sub/goodbye");
-const welcome_1 = require("./sub/welcome");
+const greets_1 = require("../../handlers/greets");
 exports.command = {
     name: 'greets',
     description: 'greet message commands',
@@ -56,11 +55,11 @@ const run = async (interaction, bot) => {
     let data;
     switch (sub) {
         case 'welcome': {
-            data = await (0, welcome_1.welcome)(interaction, bot);
+            data = await (0, greets_1.greetsCommand)(interaction, bot, 'welcome');
             break;
         }
         case 'goodbye': {
-            data = await (0, goodbye_1.goodbye)(interaction, bot);
+            data = await (0, greets_1.greetsCommand)(interaction, bot, 'goodbye');
             break;
         }
     }

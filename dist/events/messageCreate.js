@@ -4,7 +4,6 @@ exports.run = exports.name = void 0;
 const discord_js_1 = require("discord.js");
 exports.name = 'messageCreate';
 const run = async (message) => {
-    console.log(message.content);
     if (message.content.startsWith((0, discord_js_1.userMention)(message.client.user.id))) {
         const embed = new discord_js_1.EmbedBuilder()
             .setTitle("Hello!")

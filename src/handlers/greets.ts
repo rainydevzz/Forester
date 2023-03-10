@@ -1,4 +1,4 @@
-import { GuildMember, TextChannel, EmbedBuilder, ColorResolvable } from "discord.js";
+import { GuildMember, TextChannel, EmbedBuilder, ColorResolvable, ChatInputCommandInteraction } from "discord.js";
 import { MyClient } from "../bot";
 
 export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'welcome' | 'goodbye') => {
@@ -23,4 +23,35 @@ export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'we
         .setColor(color);
 
     await channel.send({embeds: [embed]});
+}
+
+export const greetsCommand = async (interaction: ChatInputCommandInteraction, bot: MyClient, mode: 'goodbye' | 'welcome') => {
+    let data = {};
+    data[`${mode}content`] = interaction.options.getString('content');
+    data[`${mode}channel`] = interaction.options.getChannel('channel').id;
+    let data2 = {guild: interaction.guildId};
+    data2[`${mode}content`] = data[`${mode}content`];
+    data2[`${mode}channel`] = data[`${mode}channel`];
+    await bot.db.greets.upsert({
+        where: {guild: interaction.guildId},
+        update: data,
+        create: data2
+    });
+
+    const embed = new EmbedBuilder()
+        .setTitle("Setup Complete")
+        .setDescription("Greeting message setup complete!")
+        .addFields([
+            {
+                name: 'Channel',
+                value: `<#${interaction.options.getChannel('channel').id}>`
+            },
+            {
+                name: 'Content',
+                value: interaction.options.getString('content')
+            }
+        ])
+        .setColor("Green");
+
+    return embed;
 }
