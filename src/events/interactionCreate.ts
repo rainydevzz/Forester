@@ -10,9 +10,9 @@ export const run = async (interaction: BaseInteraction, bot: MyClient) => {
             await bot.commands.get(interaction.commandName)(interaction, bot);
         } catch(err) {
             const embed = new EmbedBuilder()
-            .setTitle("Uh Oh, Error!")
-            .setDescription(`\`\`\`\n${err.message}\`\`\``)
-            .setColor("Red");
+                .setTitle("Uh Oh, Error!")
+                .setDescription(`\`\`\`\n${err.message}\`\`\``)
+                .setColor("Red");
             logger.error(err);
             await interaction.followUp({embeds: [embed]});
         }
