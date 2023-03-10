@@ -39,7 +39,7 @@ export async function run(interaction: ChatInputCommandInteraction, bot: MyClien
             let embed = {
                 title: `Command Info For ${cmd}`,
                 description: descStr,
-                color: 0x000099
+                color: 0x00ff00
             }
             await interaction.followUp({embeds: [embed]});
         } else {
@@ -59,7 +59,7 @@ export async function run(interaction: ChatInputCommandInteraction, bot: MyClien
             let embed = {
                 title: `Command Info For ${cmd}`,
                 description: descStr,
-                color: 0x000099
+                color: 0x00ff00
             }
             await interaction.followUp({embeds: [embed]});
         }
@@ -71,7 +71,7 @@ export async function run(interaction: ChatInputCommandInteraction, bot: MyClien
         let embed = {
             title: `Command Info`,
             description: descStr,
-            color: 0x000099
+            color: 0x00ff00
         }
         await interaction.followUp({embeds: [embed]});
     }

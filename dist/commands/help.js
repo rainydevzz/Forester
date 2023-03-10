@@ -35,7 +35,7 @@ async function run(interaction, bot) {
             let embed = {
                 title: `Command Info For ${cmd}`,
                 description: descStr,
-                color: 0x000099
+                color: 0x00ff00
             };
             await interaction.followUp({ embeds: [embed] });
         }
@@ -57,7 +57,7 @@ async function run(interaction, bot) {
             let embed = {
                 title: `Command Info For ${cmd}`,
                 description: descStr,
-                color: 0x000099
+                color: 0x00ff00
             };
             await interaction.followUp({ embeds: [embed] });
         }
@@ -70,7 +70,7 @@ async function run(interaction, bot) {
         let embed = {
             title: `Command Info`,
             description: descStr,
-            color: 0x000099
+            color: 0x00ff00
         };
         await interaction.followUp({ embeds: [embed] });
     }
