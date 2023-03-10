@@ -2,8 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.command = exports.run = void 0;
 const discord_js_1 = require("discord.js");
+// this is just ported from another bot I made soo that's why it's kinda shitty and not in the same style as the rest of the commands lol
 async function run(interaction, bot) {
-    const commands = bot.collectCommands();
+    const commands = bot.collectCommands()[0];
     let cmd = interaction.options.getString('command');
     if (cmd) {
         if (cmd.includes(' ')) {

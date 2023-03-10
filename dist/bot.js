@@ -13,7 +13,7 @@ class MyClient extends discord_js_1.Client {
     events;
     db = new client_1.PrismaClient();
     async syncCommands() {
-        await this.application?.commands.set(this.collectCommands());
+        await this.application?.commands.set(this.collectCommands()[0]);
         console.log(`Synced ${this.commands.size} base commands!`);
     }
     collectCommands() {
@@ -39,7 +39,7 @@ class MyClient extends discord_js_1.Client {
                 this.commands.set(command.name, run);
             }
         }
-        return cmds;
+        return [cmds, this];
     }
     collectEvents() {
         let eventList = [];
@@ -50,12 +50,13 @@ class MyClient extends discord_js_1.Client {
             eventList.push({ name: data.name, run: data.run });
         }
         this.events = eventList;
-        return eventList;
+        return this;
     }
     handleEvents() {
         for (const e of this.events) {
             this.on(e.name, (...args) => e.run(...args, this));
         }
+        return this;
     }
     debug() {
         console.log(this.events);

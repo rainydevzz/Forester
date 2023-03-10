@@ -1,8 +1,4 @@
-import {
-    ApplicationCommandData,
-    Client,
-    SlashCommandBuilder
-} from 'discord.js';
+import { ApplicationCommandData, Client } from 'discord.js';
 import { readdirSync, lstatSync } from 'fs';
 import path from 'path';
 import { EventOptions } from './types';
@@ -15,11 +11,11 @@ export class MyClient extends Client {
     db: PrismaClient = new PrismaClient();
 
     async syncCommands() {
-        await this.application?.commands.set(this.collectCommands());
+        await this.application?.commands.set(this.collectCommands()[0]);
         console.log(`Synced ${this.commands.size} base commands!`);
     }
 
-    collectCommands(): ApplicationCommandData[] {
+    collectCommands(): [ApplicationCommandData[], this] {
         let cmds: ApplicationCommandData[] = [];
         const dir = path.join(__dirname, 'commands');
         const commandsDir = readdirSync(dir);
@@ -40,10 +36,10 @@ export class MyClient extends Client {
                 this.commands.set(command.name, run);
             }
         }
-        return cmds;
+        return [cmds, this];
     }
 
-    collectEvents(): EventOptions[] {
+    collectEvents() {
         let eventList: EventOptions[] = []
         const dir = path.join(__dirname, 'events');
         const eventDir = readdirSync(path.join(__dirname, 'events'));
@@ -52,13 +48,14 @@ export class MyClient extends Client {
             eventList.push({name: data.name, run: data.run});
         }
         this.events = eventList;
-        return eventList;
+        return this;
     }
 
     handleEvents() {
         for(const e of this.events) {
             this.on(e.name, (...args: any[]) => e.run(...args, this))
         }
+        return this;
     }
 
     debug() {

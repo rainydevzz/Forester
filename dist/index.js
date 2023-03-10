@@ -7,14 +7,14 @@ const bot_1 = require("./bot");
 const dotenv_1 = __importDefault(require("dotenv"));
 const discord_js_1 = require("discord.js");
 dotenv_1.default.config();
-const bot = new bot_1.MyClient({
+new bot_1.MyClient({
     intents: ["Guilds", "GuildMembers"],
     partials: [
         discord_js_1.Partials.User,
         discord_js_1.Partials.GuildMember
     ]
-});
-bot.collectCommands();
-bot.collectEvents();
-bot.handleEvents();
-bot.login(process.env.TOKEN);
+})
+    .collectCommands()[1]
+    .collectEvents()
+    .handleEvents()
+    .login(process.env.TOKEN);

@@ -9,7 +9,7 @@ import {
 import { MyClient } from "../bot";
 // this is just ported from another bot I made soo that's why it's kinda shitty and not in the same style as the rest of the commands lol
 export async function run(interaction: ChatInputCommandInteraction, bot: MyClient): Promise<void> {
-    const commands = bot.collectCommands() as ChatInputApplicationCommandData[];
+    const commands = bot.collectCommands()[0] as ChatInputApplicationCommandData[];
     let cmd: string = interaction.options.getString('command');
     if(cmd) {
         if(cmd.includes(' ')) {
