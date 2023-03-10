@@ -40,7 +40,6 @@ class MyClient extends discord_js_1.Client {
                 this.commands.set(command.name, run);
             }
         }
-        logger_1.logger.info({ COMMANDS: "Collected all commands!" });
         return [cmds, this];
     }
     collectEvents() {

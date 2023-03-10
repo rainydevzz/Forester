@@ -37,7 +37,6 @@ export class MyClient extends Client {
                 this.commands.set(command.name, run);
             }
         }
-        logger.info({COMMANDS: "Collected all commands!"});
         return [cmds, this];
     }
 

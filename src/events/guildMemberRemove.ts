@@ -5,6 +5,6 @@ import { handleGreets } from "../handlers/greets";
 
 export const name = 'guildMemberRemove';
 export const run = async (member: GuildMember, bot: MyClient) => {
-    logger.info({memberRemove: `${member.user.tag} has left.`});
+    logger.info({MEMBER_REMOVE: `${member.user.tag} has left.`});
     await handleGreets(member, bot, 'goodbye');
 }

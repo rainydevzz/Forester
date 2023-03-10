@@ -5,6 +5,6 @@ import { handleGreets } from "../handlers/greets";
 
 export const name = 'guildMemberAdd';
 export const run = async (member: GuildMember, bot: MyClient) => {
-    logger.info({memberAdd: `${member.user.tag} has joined.`});
+    logger.info({MEMBER_ADD: `${member.user.tag} has joined.`});
     await handleGreets(member, bot, 'welcome');
 }
