@@ -61,6 +61,7 @@ const run = async (interaction, bot) => {
         }
         case 'goodbye': {
             data = await (0, goodbye_1.goodbye)(interaction, bot);
+            break;
         }
     }
     await interaction.followUp({ embeds: [data] });

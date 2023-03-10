@@ -63,6 +63,7 @@ export const run = async (interaction: ChatInputCommandInteraction, bot: MyClien
 
         case 'goodbye': {
             data = await goodbye(interaction, bot);
+            break;
         }
     }
 

@@ -5,7 +5,7 @@ import { Partials } from "discord.js";
 dotenv.config();
 
 new MyClient({
-    intents: ["Guilds", "GuildMembers"],
+    intents: ["Guilds", "GuildMembers", "GuildMessages"],
     partials: [
         Partials.User,
         Partials.GuildMember
