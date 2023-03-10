@@ -19,7 +19,7 @@ const handleGreets = async (member, bot, mode) => {
         color = "DarkGreen";
     }
     const embed = new discord_js_1.EmbedBuilder()
-        .setTitle(`Welcome to ${member.guild.name}, ${member.user.tag}!`)
+        .setTitle(`Goodbye, ${member.guild.name}, ${member.user.tag}`)
         .setDescription(res[`${mode}content`])
         .setTimestamp(new Date())
         .setColor(color);
