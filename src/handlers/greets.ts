@@ -16,8 +16,14 @@ export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'we
     } else {
         color = "DarkGreen";
     }
+    let greetStr: string;
+    if(mode == 'welcome') {
+        greetStr = `Welcome To ${member.guild.name},`
+    } else {
+        greetStr = 'Goodbye,'
+    }
     const embed = new EmbedBuilder()
-        .setTitle(`Goodbye, ${member.guild.name}, ${member.user.tag}`)
+        .setTitle(`${greetStr} ${member.user.tag}`)
         .setDescription(res[`${mode}content`])
         .setTimestamp(new Date())
         .setColor(color)
