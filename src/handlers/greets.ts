@@ -21,7 +21,7 @@ export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'we
         .setDescription(res[`${mode}content`])
         .setTimestamp(new Date())
         .setColor(color)
-        .setThumbnail(`${member.avatarURL()}`);
+        .setThumbnail(`${member.displayAvatarURL({extension: 'png'})}`);
 
     await channel.send({embeds: [embed]});
 }

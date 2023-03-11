@@ -23,7 +23,7 @@ const handleGreets = async (member, bot, mode) => {
         .setDescription(res[`${mode}content`])
         .setTimestamp(new Date())
         .setColor(color)
-        .setThumbnail(`${member.avatarURL()}`);
+        .setThumbnail(`${member.displayAvatarURL({ extension: 'png' })}`);
     await channel.send({ embeds: [embed] });
 };
 exports.handleGreets = handleGreets;
