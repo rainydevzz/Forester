@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm i & npx prisma generate --schema ./src/prisma/schema.prisma & npx tsc & node dist/.",
-    "prisma": "npx prisma generate"
+    "prisma": "npx prisma generate --schema ./src/prisma/schema.prisma"
   },
   "author": "",
   "license": "ISC",
