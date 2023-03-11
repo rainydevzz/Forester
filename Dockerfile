@@ -6,8 +6,8 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm run prisma
-
 COPY . .
+
+RUN npm run prisma
 
 CMD ["npm", "start"]
