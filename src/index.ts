@@ -12,5 +12,6 @@ new MyClient({
     ]
 })
 .collectEvents()
+.collectComponents()
 .handleEvents()
 .login(process.env.TOKEN);

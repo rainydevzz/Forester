@@ -9,6 +9,7 @@ export class MyClient extends Client {
 
     commands: Map<string, Function> = new Map();
     events: EventOptions[];
+    components: Map<string, Function> = new Map();
     db: PrismaClient = new PrismaClient();
 
     async syncCommands() {
@@ -50,6 +51,18 @@ export class MyClient extends Client {
         }
         this.events = eventList;
         logger.info({EVENTS: "Collected All Events!"});
+        return this;
+    }
+
+    collectComponents() {
+        const dir = path.join(__dirname, 'handlers/components');
+        const dirData = readdirSync(dir);
+        for(const f of dirData) {
+            const fp = path.join(dir, f);
+            const {id, run} = require(fp);
+            this.components.set(id, run);
+        }
+        logger.info({COMPONENTS: "Collected All Components!"});
         return this;
     }
 

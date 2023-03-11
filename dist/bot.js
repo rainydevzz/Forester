@@ -12,6 +12,7 @@ const logger_1 = require("./utils/logger");
 class MyClient extends discord_js_1.Client {
     commands = new Map();
     events;
+    components = new Map();
     db = new client_1.PrismaClient();
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
@@ -52,6 +53,17 @@ class MyClient extends discord_js_1.Client {
         }
         this.events = eventList;
         logger_1.logger.info({ EVENTS: "Collected All Events!" });
+        return this;
+    }
+    collectComponents() {
+        const dir = path_1.default.join(__dirname, 'handlers/components');
+        const dirData = (0, fs_1.readdirSync)(dir);
+        for (const f of dirData) {
+            const fp = path_1.default.join(dir, f);
+            const { id, run } = require(fp);
+            this.components.set(id, run);
+        }
+        logger_1.logger.info({ COMPONENTS: "Collected All Components!" });
         return this;
     }
     handleEvents() {

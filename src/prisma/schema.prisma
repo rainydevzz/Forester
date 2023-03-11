@@ -14,3 +14,8 @@ model greets {
     goodbyechannel String?
     goodbyecontent String?
 }
+
+model confession {
+    guild String @id
+    channel String
+}

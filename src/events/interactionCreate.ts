@@ -21,4 +21,8 @@ export const run = async (interaction: BaseInteraction, bot: MyClient) => {
     if(interaction.isContextMenuCommand()) {
         await bot.commands.get(interaction.commandName)(interaction);
     }
+
+    if(interaction.isButton()) {
+        await bot.components.get(interaction.customId)(interaction, bot);
+    }
 }

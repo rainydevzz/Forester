@@ -22,5 +22,8 @@ const run = async (interaction, bot) => {
     if (interaction.isContextMenuCommand()) {
         await bot.commands.get(interaction.commandName)(interaction);
     }
+    if (interaction.isButton()) {
+        await bot.components.get(interaction.customId)(interaction, bot);
+    }
 };
 exports.run = run;
