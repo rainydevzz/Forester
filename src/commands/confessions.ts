@@ -15,6 +15,7 @@ export const command: ApplicationCommandData = {
     name: 'confessions',
     description: 'set up confession panel',
     type: ApplicationCommandType.ChatInput,
+    defaultMemberPermissions: ["ManageGuild"],
     options: [
         {
             name: 'panel_channel',
@@ -59,7 +60,7 @@ export const run = async (interaction: ChatInputCommandInteraction, bot: MyClien
         .setDescription("Make a private confession here!")
         .setTimestamp(new Date())
         .setColor("Green");
-        
+
     const panelChannel = interaction.options.getChannel('panel_channel') as TextChannel;
     await panelChannel.send({embeds: [embed], components: [view]});
 }
