@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm i & cd src & npx prisma generate & npx tsc & node dist/.",
+    "start": "npm i & npx prisma generate & npx tsc & node dist/.",
     "prisma": "npx prisma generate"
   },
   "author": "",
