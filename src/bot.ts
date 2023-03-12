@@ -77,7 +77,11 @@ export class MyClient extends Client {
 
     handleEvents() {
         for(const e of this.events) {
-            this.on(e.name, (...args: any[]) => e.run(...args, this))
+            try {
+                this.on(e.name, (...args: any[]) => e.run(...args, this));
+            } catch(err) {
+                logger.error({ERROR: err});
+            }
         }
         return this;
     }

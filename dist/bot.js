@@ -76,7 +76,12 @@ class MyClient extends discord_js_1.Client {
     }
     handleEvents() {
         for (const e of this.events) {
-            this.on(e.name, (...args) => e.run(...args, this));
+            try {
+                this.on(e.name, (...args) => e.run(...args, this));
+            }
+            catch (err) {
+                logger_1.logger.error({ ERROR: err });
+            }
         }
         return this;
     }
