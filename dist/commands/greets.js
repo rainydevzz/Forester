@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.command = void 0;
 const discord_js_1 = require("discord.js");
-const greets_1 = require("../../handlers/greets");
+const greets_1 = require("../handlers/greets");
 exports.command = {
     name: 'greets',
     description: 'greet message commands',

@@ -6,6 +6,7 @@ exports.command = {
     name: 'confessions',
     description: 'set up confession panel',
     type: discord_js_1.ApplicationCommandType.ChatInput,
+    defaultMemberPermissions: ["ManageGuild"],
     options: [
         {
             name: 'panel_channel',

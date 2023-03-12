@@ -25,4 +25,8 @@ export const run = async (interaction: BaseInteraction, bot: MyClient) => {
     if(interaction.isButton()) {
         await bot.components.get(interaction.customId)(interaction, bot);
     }
+
+    if(interaction.isAutocomplete()) {
+        await interaction.respond(await bot.autocompleteTags(interaction));
+    }
 }

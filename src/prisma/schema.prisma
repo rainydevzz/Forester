@@ -19,3 +19,10 @@ model confession {
     guild String @id
     channel String
 }
+
+model tags {
+    guild String
+    name String
+    content String
+    id String @id
+}

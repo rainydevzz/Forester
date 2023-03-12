@@ -5,6 +5,7 @@ const logger_1 = require("../utils/logger");
 exports.name = 'ready';
 const run = async (bot) => {
     logger_1.logger.info({ READY: `Ready as ${bot.user.tag}` });
+    console.log(bot.collectCommands()[0]);
     await bot.syncCommands();
     await bot.db.$connect();
 };

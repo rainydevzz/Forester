@@ -1,4 +1,4 @@
-import { ApplicationCommandData, Client } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client } from 'discord.js';
 import { readdirSync, lstatSync } from 'fs';
 import path from 'path';
 import { EventOptions } from './types';
@@ -15,6 +15,15 @@ export class MyClient extends Client {
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
         logger.info({COMMANDS: `Synced All Commands!`});
+    }
+
+    async autocompleteTags(interaction: AutocompleteInteraction) {
+        let arr: ApplicationCommandOptionChoiceData[] = [];
+        const res = await this.db.tags.findMany({where: {guild: interaction.guildId}});
+        for(const r of res) {
+            arr.push({name: r.name, value: r.name});
+        }
+        return arr;
     }
 
     collectCommands(): [ApplicationCommandData[], this] {
@@ -76,6 +85,11 @@ export class MyClient extends Client {
     isOwner(id: string) {
         const owners = process.env.OWNERS.split(' ');
         return owners.includes(id);
+    }
+
+    genString(): string {
+        const r = Math.random().toString(36).substring(2, 18);
+        return r;
     }
 
     debug() {

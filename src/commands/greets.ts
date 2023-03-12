@@ -1,6 +1,6 @@
 import { ApplicationCommandData, ChatInputCommandInteraction, ApplicationCommandType, ApplicationCommandOptionType, ChannelType, EmbedBuilder } from "discord.js";
-import { MyClient } from "../../bot";
-import { greetsCommand } from "../../handlers/greets";
+import { MyClient } from "../bot";
+import { greetsCommand } from "../handlers/greets";
 
 export const command: ApplicationCommandData = {
     name: 'greets',

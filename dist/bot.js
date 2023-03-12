@@ -18,6 +18,14 @@ class MyClient extends discord_js_1.Client {
         await this.application?.commands.set(this.collectCommands()[0]);
         logger_1.logger.info({ COMMANDS: `Synced All Commands!` });
     }
+    async autocompleteTags(interaction) {
+        let arr = [];
+        const res = await this.db.tags.findMany({ where: { guild: interaction.guildId } });
+        for (const r of res) {
+            arr.push({ name: r.name, value: r.name });
+        }
+        return arr;
+    }
     collectCommands() {
         let cmds = [];
         const dir = path_1.default.join(__dirname, 'commands');
@@ -75,6 +83,10 @@ class MyClient extends discord_js_1.Client {
     isOwner(id) {
         const owners = process.env.OWNERS.split(' ');
         return owners.includes(id);
+    }
+    genString() {
+        const r = Math.random().toString(36).substring(2, 18);
+        return r;
     }
     debug() {
         console.log(this.events);
