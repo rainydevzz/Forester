@@ -1,4 +1,4 @@
-import { GuildMember, TextChannel, EmbedBuilder, ColorResolvable, ChatInputCommandInteraction } from "discord.js";
+import { GuildMember, TextChannel, EmbedBuilder, ChatInputCommandInteraction } from "discord.js";
 import { MyClient } from "../bot";
 
 export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'welcome' | 'goodbye') => {
@@ -10,26 +10,9 @@ export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'we
     if(!res[`${mode}channel`] || !res[`${mode}content`]) return;
 
     const channel = bot.channels.cache.get(res[`${mode}channel`]) as TextChannel;
-    let color: ColorResolvable;
-    if(mode == 'goodbye') {
-        color = "DarkRed";
-    } else {
-        color = "DarkGreen";
-    }
-    let greetStr: string;
-    if(mode == 'welcome') {
-        greetStr = `Welcome To ${member.guild.name},`
-    } else {
-        greetStr = 'Goodbye,'
-    }
-    const embed = new EmbedBuilder()
-        .setTitle(`${greetStr} ${member.user.tag}`)
-        .setDescription(res[`${mode}content`])
-        .setTimestamp(new Date())
-        .setColor(color)
-        .setThumbnail(`${member.displayAvatarURL({extension: 'png'})}`);
+    let greetStr = res[`${mode}content`];
 
-    await channel.send({embeds: [embed]});
+    await channel.send(`<@${member.id}> , ${greetStr}`);
 }
 
 export const greetsCommand = async (interaction: ChatInputCommandInteraction, bot: MyClient, mode: 'goodbye' | 'welcome') => {

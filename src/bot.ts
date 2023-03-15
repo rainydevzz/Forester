@@ -1,7 +1,7 @@
-import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client, User } from 'discord.js';
 import { readdirSync, lstatSync } from 'fs';
 import path from 'path';
-import { EventOptions } from './types';
+import { CooldownOptions, EventOptions } from './types';
 import { PrismaClient } from '@prisma/client';
 import { logger } from './utils/logger';
 
@@ -11,6 +11,7 @@ export class MyClient extends Client {
     events: EventOptions[];
     components: Map<string, Function> = new Map();
     db: PrismaClient = new PrismaClient();
+    cooldown: Map<string, CooldownOptions[]> = new Map();
 
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
@@ -24,6 +25,94 @@ export class MyClient extends Client {
             arr.push({name: r.name, value: r.name});
         }
         return arr;
+    }
+
+    async getBal(member: User) {
+        const res = await this.db.econ.findFirst({
+            where: {user: member.id}
+        });
+        if(!res) {
+            await this.db.econ.create({data: {
+                user: member.id,
+                balance: 100
+            }});
+            return 100;
+        } else {
+            return res.balance;
+        }
+    }
+
+    async changeBal(user: User, change: number) {
+        const res = await this.getBal(user);
+        await this.db.econ.update({where: {user: user.id}, data: {
+            balance: res + change
+        }});
+
+        return res + change;
+    }
+
+    async getItem(name: string) {
+        const res = await this.db.shop.findFirst({where: {name: name}});
+        return res;
+    }
+
+    async getInv(user: User, name: string, full: boolean) {
+        let data = {user: user.id};
+        if(!full) {
+            data[name] = name;
+        }
+        const res = await this.db.inventory.findMany({where: {AND: data}});
+        return res;
+    }
+
+    async buy(member: User, item: string): Promise<'success' | 'item' | 'balance'> {
+        const userRes = await this.getBal(member);
+        const itemRes = await this.getItem(item);
+        if(!itemRes) {
+            return 'item';
+        }
+        if(itemRes.price > userRes) {
+            return 'balance';
+        }
+
+        const invRes = await this.getInv(member, itemRes.name, false);
+        if(!invRes) {
+            await this.db.inventory.create({data: {
+                user: member.id,
+                name: itemRes.name,
+                quantity: 1,
+                id: this.genString()
+            }});
+            await this.changeQuantity(itemRes.name, -1);
+            return 'success';
+        } else {
+            await this.db.inventory.updateMany({where: {AND: {
+                name: itemRes.name,
+                user: member.id
+            }},
+            data: {
+                quantity: invRes[0].quantity + 1
+            }});
+            await this.changeQuantity(itemRes.name, -1);
+            return 'success';
+        }
+    }
+
+    async changeQuantity(name: string, num: number) {
+        await this.db.shop.update({where: {name: name}, data: {
+            quantity: {increment: num}
+        }});
+    }
+
+    async addItem(name: string, quantity: number, price: number) {
+        const i = await this.db.shop.create({
+            data: {
+                name: name,
+                quantity: quantity,
+                price: price
+            }
+        });
+        return i;
     }
 
     collectCommands(): [ApplicationCommandData[], this] {
@@ -92,8 +181,29 @@ export class MyClient extends Client {
     }
 
     genString(): string {
-        const r = Math.random().toString(36).substring(2, 18);
+        const r = Math.random().toString(36).substring(2, 20);
         return r;
+    }
+
+    getCooldown(id: string, command: string, cooldown: number): boolean {
+        const user = this.cooldown.get(id);
+        const data = {timestamp: new Date().getTime(), cooldown: cooldown, command: command};
+        if(!user) {
+            this.cooldown.set(id, [data]);
+            return true;
+        }
+        const cmd = user.find(c => c.command == command);
+        if(!cmd) {
+            user.push(data);
+            return true;
+        }
+        if(data.timestamp - cmd.timestamp < data.cooldown) {
+            return false;
+        } else {
+            delete user[user.indexOf(cmd)];
+            user.push(data);
+            return true;
+        }
     }
 
     debug() {

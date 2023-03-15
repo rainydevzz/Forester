@@ -26,3 +26,21 @@ model tags {
     content String
     id String @id
 }
+
+model econ {
+    user String @id
+    balance Int
+}
+
+model shop {
+    name String @id
+    price Int
+    quantity Int
+}
+
+model inventory {
+    id String @id
+    name String
+    user String
+    quantity Int
+}
