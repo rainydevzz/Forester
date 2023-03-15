@@ -14,6 +14,7 @@ class MyClient extends discord_js_1.Client {
     events;
     components = new Map();
     db = new client_1.PrismaClient();
+    cooldown = new Map();
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
         logger_1.logger.info({ COMMANDS: `Synced All Commands!` });
@@ -25,6 +26,87 @@ class MyClient extends discord_js_1.Client {
             arr.push({ name: r.name, value: r.name });
         }
         return arr;
+    }
+    async getBal(member) {
+        const res = await this.db.econ.findFirst({
+            where: { user: member.id }
+        });
+        if (!res) {
+            await this.db.econ.create({ data: {
+                    user: member.id,
+                    balance: 100
+                } });
+            return 100;
+        }
+        else {
+            return res.balance;
+        }
+    }
+    async changeBal(user, change) {
+        const res = await this.getBal(user);
+        await this.db.econ.update({ where: { user: user.id }, data: {
+                balance: res + change
+            } });
+        return res + change;
+    }
+    async getItem(name) {
+        const res = await this.db.shop.findFirst({ where: { name: name } });
+        return res;
+    }
+    async getInv(user, name, full) {
+        let data = { user: user.id };
+        if (!full) {
+            data[name] = name;
+        }
+        const res = await this.db.inventory.findMany({ where: { AND: data } });
+        return res;
+    }
+    async buy(member, item) {
+        const userRes = await this.getBal(member);
+        const itemRes = await this.getItem(item);
+        if (!itemRes) {
+            return 'item';
+        }
+        if (itemRes.price > userRes) {
+            return 'balance';
+        }
+        const invRes = await this.getInv(member, itemRes.name, false);
+        if (!invRes) {
+            await this.db.inventory.create({ data: {
+                    user: member.id,
+                    name: itemRes.name,
+                    quantity: 1,
+                    id: this.genString()
+                } });
+            await this.changeQuantity(itemRes.name, -1);
+            return 'success';
+        }
+        else {
+            await this.db.inventory.updateMany({ where: { AND: {
+                        name: itemRes.name,
+                        user: member.id
+                    } },
+                data: {
+                    quantity: invRes[0].quantity + 1
+                } });
+            await this.changeQuantity(itemRes.name, -1);
+            return 'success';
+        }
+    }
+    async changeQuantity(name, num) {
+        await this.db.shop.update({ where: { name: name }, data: {
+                quantity: { increment: num }
+            } });
+    }
+    async addItem(name, quantity, price) {
+        const i = await this.db.shop.create({
+            data: {
+                name: name,
+                quantity: quantity,
+                price: price
+            }
+        });
+        return i;
     }
     collectCommands() {
         let cmds = [];
@@ -90,8 +172,29 @@ class MyClient extends discord_js_1.Client {
         return owners.includes(id);
     }
     genString() {
-        const r = Math.random().toString(36).substring(2, 18);
+        const r = Math.random().toString(36).substring(2, 20);
         return r;
+    }
+    getCooldown(id, command, cooldown) {
+        const user = this.cooldown.get(id);
+        const data = { timestamp: new Date().getTime(), cooldown: cooldown, command: command };
+        if (!user) {
+            this.cooldown.set(id, [data]);
+            return true;
+        }
+        const cmd = user.find(c => c.command == command);
+        if (!cmd) {
+            user.push(data);
+            return true;
+        }
+        if (data.timestamp - cmd.timestamp < data.cooldown) {
+            return false;
+        }
+        else {
+            delete user[user.indexOf(cmd)];
+            user.push(data);
+            return true;
+        }
     }
     debug() {
         console.log(this.events);

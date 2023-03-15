@@ -11,27 +11,8 @@ const handleGreets = async (member, bot, mode) => {
     if (!res[`${mode}channel`] || !res[`${mode}content`])
         return;
     const channel = bot.channels.cache.get(res[`${mode}channel`]);
-    let color;
-    if (mode == 'goodbye') {
-        color = "DarkRed";
-    }
-    else {
-        color = "DarkGreen";
-    }
-    let greetStr;
-    if (mode == 'welcome') {
-        greetStr = `Welcome To ${member.guild.name},`;
-    }
-    else {
-        greetStr = 'Goodbye,';
-    }
-    const embed = new discord_js_1.EmbedBuilder()
-        .setTitle(`${greetStr} ${member.user.tag}`)
-        .setDescription(res[`${mode}content`])
-        .setTimestamp(new Date())
-        .setColor(color)
-        .setThumbnail(`${member.displayAvatarURL({ extension: 'png' })}`);
-    await channel.send({ embeds: [embed] });
+    let greetStr = res[`${mode}content`];
+    await channel.send(`<@${member.id}> , ${greetStr}`);
 };
 exports.handleGreets = handleGreets;
 const greetsCommand = async (interaction, bot, mode) => {
