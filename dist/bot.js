@@ -114,6 +114,7 @@ class MyClient extends discord_js_1.Client {
         const res = await this.getItem(name);
         if (res) {
             await this.changeQuantity(name, quantity);
+            await this.changePrice(name, price);
             return res;
         }
         const i = await this.db.shop.create({

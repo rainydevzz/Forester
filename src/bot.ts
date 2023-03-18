@@ -123,6 +123,7 @@ export class MyClient extends Client {
         const res = await this.getItem(name);
         if(res) {
             await this.changeQuantity(name, quantity);
+            await this.changePrice(name, price);
             return res;
         }
         const i = await this.db.shop.create({
