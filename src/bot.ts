@@ -111,7 +111,7 @@ export class MyClient extends Client {
 
     async changeQuantity(name: string, num: number) {
         await this.db.shop.update({where: {name: name}, data: {
-            quantity: num
+            quantity: {increment: num}
         }});
     }
 

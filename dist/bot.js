@@ -104,7 +104,7 @@ class MyClient extends discord_js_1.Client {
     }
     async changeQuantity(name, num) {
         await this.db.shop.update({ where: { name: name }, data: {
-                quantity: num
+                quantity: { increment: num }
             } });
     }
     async changePrice(name, num) {
