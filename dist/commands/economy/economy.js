@@ -7,6 +7,7 @@ const admingive_1 = require("./sub/admingive");
 const balance_1 = require("./sub/balance");
 const beg_1 = require("./sub/beg");
 const buy_1 = require("./sub/buy");
+const daily_1 = require("./sub/daily");
 const inventory_1 = require("./sub/inventory");
 const shop_1 = require("./sub/shop");
 exports.command = {
@@ -90,6 +91,11 @@ exports.command = {
                     required: true
                 }
             ]
+        },
+        {
+            name: 'daily',
+            description: 'get your daily coins!',
+            type: discord_js_1.ApplicationCommandOptionType.Subcommand
         }
     ]
 };
@@ -123,6 +129,10 @@ const run = async (interaction, bot) => {
         }
         case 'additem': {
             data = await (0, additem_1.additem)(interaction, bot);
+            break;
+        }
+        case 'daily': {
+            data = await (0, daily_1.daily)(interaction, bot);
             break;
         }
     }

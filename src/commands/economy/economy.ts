@@ -5,6 +5,7 @@ import { admingive } from "./sub/admingive";
 import { balance } from "./sub/balance";
 import { beg } from "./sub/beg";
 import { buy } from "./sub/buy";
+import { daily } from "./sub/daily";
 import { inventory } from "./sub/inventory";
 import { shop } from "./sub/shop";
 
@@ -89,6 +90,11 @@ export const command: ApplicationCommandData = {
                     required: true
                 }
             ]
+        },
+        {
+            name: 'daily',
+            description: 'get your daily coins!',
+            type: ApplicationCommandOptionType.Subcommand
         }
     ]
 }
@@ -111,6 +117,8 @@ export const run = async (interaction: ChatInputCommandInteraction, bot: MyClien
         case 'inventory': { data = await inventory(interaction, bot); break; }
 
         case 'additem': { data = await additem(interaction, bot); break; }
+
+        case 'daily': { data = await daily(interaction, bot); break; }
     }
 
     await interaction.followUp({embeds: [data]});
