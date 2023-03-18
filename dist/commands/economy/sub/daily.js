@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.daily = void 0;
 const discord_js_1 = require("discord.js");
 const daily = async (interaction, bot) => {
-    const cooldown = bot.getCooldown(interaction.user.id, 'beg', 86400 * 1000);
+    const cooldown = bot.getCooldown(interaction.user.id, 'daily', 86400 * 1000);
     if (!cooldown[0]) {
         const remainder = cooldown[1];
         const embed = new discord_js_1.EmbedBuilder()
