@@ -6,6 +6,11 @@ exports.name = 'ready';
 const run = async (bot) => {
     logger_1.logger.info({ READY: `Ready as ${bot.user.tag}` });
     await bot.syncCommands();
-    await bot.db.$connect();
+    try {
+        await bot.db.$connect();
+    }
+    catch (err) {
+        console.error(err);
+    }
 };
 exports.run = run;

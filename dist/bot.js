@@ -56,22 +56,29 @@ class MyClient extends discord_js_1.Client {
     async getInv(user, name, full) {
         let data = { user: user.id };
         if (!full) {
-            data[name] = name;
+            data['name'] = name;
         }
         const res = await this.db.inventory.findMany({ where: { AND: data } });
+        return res;
+    }
+    async getShop() {
+        const res = await this.db.shop.findMany();
         return res;
     }
     async buy(member, item) {
         const userRes = await this.getBal(member);
         const itemRes = await this.getItem(item);
         if (!itemRes) {
-            return 'item';
+            return ['item'];
         }
         if (itemRes.price > userRes) {
-            return 'balance';
+            return ['balance', itemRes.price, userRes];
+        }
+        if (itemRes.quantity == 0) {
+            return ['quantity'];
         }
         const invRes = await this.getInv(member, itemRes.name, false);
-        if (!invRes) {
+        if (!invRes[0]) {
             await this.db.inventory.create({ data: {
                     user: member.id,
                     name: itemRes.name,
@@ -79,7 +86,8 @@ class MyClient extends discord_js_1.Client {
                     id: this.genString()
                 } });
             await this.changeQuantity(itemRes.name, -1);
-            return 'success';
+            await this.changeBal(member, -itemRes.price);
+            return ['success'];
         }
         else {
             await this.db.inventory.updateMany({ where: { AND: {
@@ -90,15 +98,24 @@ class MyClient extends discord_js_1.Client {
                     quantity: invRes[0].quantity + 1
                 } });
             await this.changeQuantity(itemRes.name, -1);
-            return 'success';
+            await this.changeBal(member, -itemRes.price);
+            return ['success'];
         }
     }
     async changeQuantity(name, num) {
         await this.db.shop.update({ where: { name: name }, data: {
-                quantity: { increment: num }
+                quantity: num
             } });
     }
+    async changePrice(name, num) {
+        await this.db.shop.update({ where: { name: name }, data: { price: num } });
+    }
     async addItem(name, quantity, price) {
+        const res = await this.getItem(name);
+        if (res) {
+            await this.changeQuantity(name, quantity);
+            return res;
+        }
         const i = await this.db.shop.create({
             data: {
                 name: name,
@@ -180,20 +197,21 @@ class MyClient extends discord_js_1.Client {
         const data = { timestamp: new Date().getTime(), cooldown: cooldown, command: command };
         if (!user) {
             this.cooldown.set(id, [data]);
-            return true;
+            return [true];
         }
         const cmd = user.find(c => c.command == command);
         if (!cmd) {
             user.push(data);
-            return true;
+            return [true];
         }
         if (data.timestamp - cmd.timestamp < data.cooldown) {
-            return false;
+            let num = Math.floor((data.cooldown - (data.timestamp - cmd.timestamp)) / 60000);
+            return [false, num];
         }
         else {
             delete user[user.indexOf(cmd)];
             user.push(data);
-            return true;
+            return [true];
         }
     }
     debug() {

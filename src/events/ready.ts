@@ -5,5 +5,9 @@ export const name = 'ready';
 export const run = async (bot: MyClient) => {
     logger.info({READY: `Ready as ${bot.user.tag}`});
     await bot.syncCommands();
-    await bot.db.$connect();
+    try {
+        await bot.db.$connect();
+    } catch(err) {
+        console.error(err);
+    }
 }

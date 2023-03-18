@@ -59,24 +59,33 @@ export class MyClient extends Client {
     async getInv(user: User, name: string, full: boolean) {
         let data = {user: user.id};
         if(!full) {
-            data[name] = name;
+            data['name'] = name;
         }
         const res = await this.db.inventory.findMany({where: {AND: data}});
         return res;
     }
 
-    async buy(member: User, item: string): Promise<'success' | 'item' | 'balance'> {
+    async getShop() {
+        const res = await this.db.shop.findMany();
+        return res;
+    }
+
+    async buy(member: User, item: string): Promise<['quantity' | 'item' | 'balance' | 'success', number?, number?]> {
         const userRes = await this.getBal(member);
         const itemRes = await this.getItem(item);
         if(!itemRes) {
-            return 'item';
+            return ['item'];
         }
         if(itemRes.price > userRes) {
-            return 'balance';
+            return ['balance', itemRes.price, userRes];
+        }
+
+        if(itemRes.quantity == 0) {
+            return ['quantity']
         }
 
         const invRes = await this.getInv(member, itemRes.name, false);
-        if(!invRes) {
+        if(!invRes[0]) {
             await this.db.inventory.create({data: {
                 user: member.id,
                 name: itemRes.name,
@@ -84,7 +93,8 @@ export class MyClient extends Client {
                 id: this.genString()
             }});
             await this.changeQuantity(itemRes.name, -1);
-            return 'success';
+            await this.changeBal(member, -itemRes.price);
+            return ['success'];
         } else {
             await this.db.inventory.updateMany({where: {AND: {
                 name: itemRes.name,
@@ -94,17 +104,27 @@ export class MyClient extends Client {
                 quantity: invRes[0].quantity + 1
             }});
             await this.changeQuantity(itemRes.name, -1);
-            return 'success';
+            await this.changeBal(member, -itemRes.price);
+            return ['success'];
         }
     }
 
     async changeQuantity(name: string, num: number) {
         await this.db.shop.update({where: {name: name}, data: {
-            quantity: {increment: num}
+            quantity: num
         }});
     }
 
+    async changePrice(name: string, num: number) {
+        await this.db.shop.update({where: {name: name}, data: {price: num}});
+    }
+
     async addItem(name: string, quantity: number, price: number) {
+        const res = await this.getItem(name);
+        if(res) {
+            await this.changeQuantity(name, quantity);
+            return res;
+        }
         const i = await this.db.shop.create({
             data: {
                 name: name,
@@ -185,24 +205,25 @@ export class MyClient extends Client {
         return r;
     }
 
-    getCooldown(id: string, command: string, cooldown: number): boolean {
+    getCooldown(id: string, command: string, cooldown: number) {
         const user = this.cooldown.get(id);
         const data = {timestamp: new Date().getTime(), cooldown: cooldown, command: command};
         if(!user) {
             this.cooldown.set(id, [data]);
-            return true;
+            return [true];
         }
         const cmd = user.find(c => c.command == command);
         if(!cmd) {
             user.push(data);
-            return true;
+            return [true];
         }
         if(data.timestamp - cmd.timestamp < data.cooldown) {
-            return false;
+            let num = Math.floor((data.cooldown - (data.timestamp - cmd.timestamp)) / 60000);
+            return [false, num];
         } else {
             delete user[user.indexOf(cmd)];
             user.push(data);
-            return true;
+            return [true];
         }
     }
 
