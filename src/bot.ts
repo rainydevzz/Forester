@@ -207,6 +207,8 @@ export class MyClient extends Client {
             if(!userCheck) {
                 await this.db.levels.deleteMany({where: {guild: guild, user: res[i].user}});
                 i = 0;
+                arr = [];
+                continue;
             }
             let xp = res[i].xp + (res[i].level * 100);
             arr.push([res[i].user, xp, res[i].level]);
