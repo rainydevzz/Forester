@@ -200,16 +200,17 @@ export class MyClient extends Client {
 
     async getTotalXP(guild: string): Promise<[string, number, number][]> {
         let arr = [];
-        const res = await this.db.levels.findMany({where: {guild: guild}});
+        
+        let res = await this.db.levels.findMany({where: {guild: guild}});
+        for(const i of res) {
+            const userCheck = this.users.cache.get(i.user);
+            if(!userCheck) {
+                await this.db.levels.deleteMany({where: {AND: {guild: guild, user: i.user}}});
+            }
+        }
+        res = await this.db.levels.findMany({where: {guild: guild}});
         for(let i = 0; i < 10; i++) {
             if(!res[i]) break;
-            const userCheck = this.users.cache.get(res[i].user);
-            if(!userCheck) {
-                await this.db.levels.deleteMany({where: {AND: {guild: guild, user: res[i].user}}});
-                i = 0;
-                arr = [];
-                continue;
-            }
             let xp = res[i].xp + (res[i].level * 100);
             arr.push([res[i].user, xp, res[i].level]);
         }
