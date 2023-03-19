@@ -191,6 +191,11 @@ class MyClient extends discord_js_1.Client {
         for (let i = 0; i < 10; i++) {
             if (!res[i])
                 break;
+            const userCheck = this.users.cache.get(res[i].user);
+            if (!userCheck) {
+                await this.db.levels.deleteMany({ where: { guild: guild, user: res[i].user } });
+                i = 0;
+            }
             let xp = res[i].xp + (res[i].level * 100);
             arr.push([res[i].user, xp, res[i].level]);
         }
