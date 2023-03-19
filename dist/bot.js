@@ -185,6 +185,30 @@ class MyClient extends discord_js_1.Client {
             await channel.send(`GG ${user.tag}, you advanced a level!`);
         }
     }
+    async getTotalXP(guild) {
+        let arr = [];
+        const res = await this.db.levels.findMany({ where: { guild: guild } });
+        for (let i = 0; i < 10; i++) {
+            if (!res[i])
+                break;
+            let xp = res[i].xp + (res[i].level * 100);
+            arr.push([res[i].user, xp, res[i].level]);
+        }
+        arr.sort((a, b) => b[1] - a[1]);
+        return arr;
+    }
+    doLevelLB(arr) {
+        let fields = [];
+        for (const i of arr) {
+            const user = this.users.cache.get(i[0]);
+            fields.push({ name: `${arr.indexOf(i) + 1}. ${user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}` });
+        }
+        const embed = new discord_js_1.EmbedBuilder()
+            .setTitle(`Leaderboard!`)
+            .setDescription("Leaderboard for this server")
+            .setFields(fields);
+        return embed;
+    }
     collectCommands() {
         let cmds = [];
         const dir = path_1.default.join(__dirname, 'commands');

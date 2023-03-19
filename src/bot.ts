@@ -1,4 +1,4 @@
-import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client, TextChannel, User } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client, EmbedBuilder, TextChannel, User } from 'discord.js';
 import { readdirSync, lstatSync } from 'fs';
 import path from 'path';
 import { CooldownOptions, EventOptions } from './types';
@@ -196,6 +196,32 @@ export class MyClient extends Client {
             const channel = this.channels.cache.get(await this.getLevelChannel(arr[i][1])) as TextChannel;
             await channel.send(`GG ${user.tag}, you advanced a level!`);
         }
+    }
+
+    async getTotalXP(guild: string): Promise<[string, number, number][]> {
+        let arr = [];
+        const res = await this.db.levels.findMany({where: {guild: guild}});
+        for(let i = 0; i < 10; i++) {
+            if(!res[i]) break;
+            let xp = res[i].xp + (res[i].level * 100);
+            arr.push([res[i].user, xp, res[i].level]);
+        }
+        arr.sort((a, b) => b[1] - a[1]);
+        return arr;
+    }
+
+    doLevelLB(arr: [string, number, number][]) {
+        let fields = [];
+        for(const i of arr) {
+            const user = this.users.cache.get(i[0]);
+            fields.push({name: `${arr.indexOf(i) + 1}. ${user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}`});
+        }
+        const embed = new EmbedBuilder()
+            .setTitle(`Leaderboard!`)
+            .setDescription("Leaderboard for this server")
+            .setFields(fields);
+
+        return embed;
     }
 
     collectCommands(): [ApplicationCommandData[], this] {

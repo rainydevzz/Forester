@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.command = void 0;
 const discord_js_1 = require("discord.js");
 const channelset_1 = require("./sub/channelset");
+const leaderboard_1 = require("./sub/leaderboard");
 const level_1 = require("./sub/level");
 exports.command = {
     name: 'levels',
@@ -26,6 +27,11 @@ exports.command = {
             name: 'level',
             description: 'see your level',
             type: discord_js_1.ApplicationCommandOptionType.Subcommand
+        },
+        {
+            name: 'leaderboard',
+            description: 'leaderboard command',
+            type: discord_js_1.ApplicationCommandOptionType.Subcommand
         }
     ]
 };
@@ -39,6 +45,10 @@ const run = async (interaction, bot) => {
         }
         case 'level': {
             data = await (0, level_1.level)(interaction, bot);
+            break;
+        }
+        case 'leaderboard': {
+            data = await (0, leaderboard_1.leaderboard)(interaction, bot);
             break;
         }
     }

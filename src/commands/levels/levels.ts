@@ -1,6 +1,7 @@
 import { ApplicationCommandData, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ChatInputCommandInteraction, EmbedBuilder } from "discord.js";
 import { MyClient } from "../../bot";
 import { channelset } from "./sub/channelset";
+import { leaderboard } from "./sub/leaderboard";
 import { level } from "./sub/level";
 
 export const command: ApplicationCommandData = {
@@ -25,6 +26,11 @@ export const command: ApplicationCommandData = {
             name: 'level',
             description: 'see your level',
             type: ApplicationCommandOptionType.Subcommand
+        },
+        {
+            name: 'leaderboard',
+            description: 'leaderboard command',
+            type: ApplicationCommandOptionType.Subcommand
         }
     ]
 }
@@ -37,6 +43,8 @@ export const run = async (interaction: ChatInputCommandInteraction, bot: MyClien
         case 'channelset': { data = await channelset(interaction, bot); break; }
         
         case 'level': { data = await level(interaction, bot); break; }
+
+        case 'leaderboard': { data = await leaderboard(interaction, bot); break; }
     }
 
     await interaction.followUp({embeds: [data]});
