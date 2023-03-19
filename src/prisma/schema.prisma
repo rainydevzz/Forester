@@ -44,3 +44,16 @@ model inventory {
     user String
     quantity Int
 }
+
+model levels {
+    id String @id
+    user String
+    guild String
+    xp Int
+    level Int
+}
+
+model levelsys {
+    guild String @id
+    channel String
+}

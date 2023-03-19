@@ -16,6 +16,9 @@ export const handleGreets = async (member: GuildMember, bot: MyClient, mode: 'we
 }
 
 export const greetsCommand = async (interaction: ChatInputCommandInteraction, bot: MyClient, mode: 'goodbye' | 'welcome') => {
+    if(!bot.isOwner(interaction.user.id)) {
+        return new EmbedBuilder().setTitle("You must be a bot owner to run this command!");
+    }
     let data = {};
     data[`${mode}content`] = interaction.options.getString('content');
     data[`${mode}channel`] = interaction.options.getChannel('channel').id;

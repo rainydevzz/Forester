@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.view = exports.deleteTag = exports.create = void 0;
 const discord_js_1 = require("discord.js");
 const create = async (interaction, bot) => {
+    if (!bot.isOwner(interaction.user.id)) {
+        return new discord_js_1.EmbedBuilder().setTitle("You must be a bot owner to run this command!");
+    }
     await bot.db.tags.create({ data: {
             guild: interaction.guildId,
             name: interaction.options.getString('name'),
@@ -21,6 +24,9 @@ const create = async (interaction, bot) => {
 };
 exports.create = create;
 const deleteTag = async (interaction, bot) => {
+    if (!bot.isOwner(interaction.user.id)) {
+        return new discord_js_1.EmbedBuilder().setTitle("You must be a bot owner to run this command!");
+    }
     await bot.db.tags.deleteMany({ where: { AND: {
                 guild: interaction.guildId,
                 name: interaction.options.getString('name')

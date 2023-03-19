@@ -16,6 +16,9 @@ const handleGreets = async (member, bot, mode) => {
 };
 exports.handleGreets = handleGreets;
 const greetsCommand = async (interaction, bot, mode) => {
+    if (!bot.isOwner(interaction.user.id)) {
+        return new discord_js_1.EmbedBuilder().setTitle("You must be a bot owner to run this command!");
+    }
     let data = {};
     data[`${mode}content`] = interaction.options.getString('content');
     data[`${mode}channel`] = interaction.options.getChannel('channel').id;

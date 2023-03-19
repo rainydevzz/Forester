@@ -7,6 +7,7 @@ exports.command = {
     name: 'greets',
     description: 'greet message commands',
     type: discord_js_1.ApplicationCommandType.ChatInput,
+    defaultMemberPermissions: ["ManageGuild"],
     options: [
         {
             name: 'welcome',

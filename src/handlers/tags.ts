@@ -2,6 +2,9 @@ import { ChatInputCommandInteraction, EmbedBuilder } from "discord.js"
 import { MyClient } from "../bot"
 
 export const create = async (interaction: ChatInputCommandInteraction, bot: MyClient) => {
+    if(!bot.isOwner(interaction.user.id)) {
+        return new EmbedBuilder().setTitle("You must be a bot owner to run this command!");
+    }
     await bot.db.tags.create({data: {
         guild: interaction.guildId,
         name: interaction.options.getString('name'),
@@ -24,6 +27,9 @@ export const create = async (interaction: ChatInputCommandInteraction, bot: MyCl
 }
 
 export const deleteTag = async (interaction: ChatInputCommandInteraction, bot: MyClient) => {
+    if(!bot.isOwner(interaction.user.id)) {
+        return new EmbedBuilder().setTitle("You must be a bot owner to run this command!");
+    }
     await bot.db.tags.deleteMany({where: {AND: {
         guild: interaction.guildId,
         name: interaction.options.getString('name')

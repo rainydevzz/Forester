@@ -10,4 +10,5 @@ export const run = async (bot: MyClient) => {
     } catch(err) {
         console.error(err);
     }
+    bot.doLevels();
 }

@@ -12,5 +12,6 @@ const run = async (bot) => {
     catch (err) {
         console.error(err);
     }
+    bot.doLevels();
 };
 exports.run = run;

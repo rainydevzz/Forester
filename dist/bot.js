@@ -15,6 +15,7 @@ class MyClient extends discord_js_1.Client {
     components = new Map();
     db = new client_1.PrismaClient();
     cooldown = new Map();
+    messageMap = new Map();
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
         logger_1.logger.info({ COMMANDS: `Synced All Commands!` });
@@ -126,6 +127,64 @@ class MyClient extends discord_js_1.Client {
         });
         return i;
     }
+    async getLevelChannel(guild) {
+        return (await this.db.levelsys.findFirst({ where: { guild: guild } })).channel;
+    }
+    async upsertLevel(user, guild, xp) {
+        const res = await this.db.levels.findMany({ where: { AND: { user: user, guild: guild } } });
+        if (!res[0]) {
+            await this.db.levels.create({ data: {
+                    user: user,
+                    guild: guild,
+                    level: 0,
+                    xp: 0,
+                    id: this.genString()
+                } });
+            return false;
+        }
+        else {
+            if (!xp)
+                xp = 0;
+            if (xp + res[0].xp >= 100) {
+                await this.db.levels.updateMany({ where: { AND: { guild: guild, user: user } }, data: {
+                        level: { increment: 1 },
+                        xp: 0
+                    } });
+                return true;
+            }
+            await this.db.levels.updateMany({ where: { AND: { user: user, guild: guild } }, data: {
+                    xp: { increment: xp }
+                } });
+            return false;
+        }
+    }
+    async doLevels() {
+        while (true) {
+            const a = await this.awardXP();
+            await this.sendLevelUp(a);
+            await new Promise(r => setTimeout(r, 60000));
+        }
+    }
+    async awardXP() {
+        let arr = [];
+        for (const g of this.messageMap.keys()) {
+            for (const u of this.messageMap.get(g).keys()) {
+                const l = await this.upsertLevel(u, g, this.messageMap.get(g).get(u).length);
+                if (l) {
+                    arr.push([u, g]);
+                }
+            }
+        }
+        this.messageMap = new Map();
+        return arr;
+    }
+    async sendLevelUp(arr) {
+        for (const i in arr) {
+            const user = this.users.cache.get(arr[i][0]);
+            const channel = this.channels.cache.get(await this.getLevelChannel(arr[i][1]));
+            await channel.send(`GG ${user.tag}, you advanced a level!`);
+        }
+    }
     collectCommands() {
         let cmds = [];
         const dir = path_1.default.join(__dirname, 'commands');
@@ -214,6 +273,19 @@ class MyClient extends discord_js_1.Client {
             user.push(data);
             return [true];
         }
+    }
+    addMessage(msg, user, guild) {
+        const guildRes = this.messageMap.get(guild);
+        if (!guildRes) {
+            this.messageMap.set(guild, new Map().set(user, [msg]));
+            return;
+        }
+        const userRes = guildRes.get(user);
+        if (!userRes) {
+            guildRes.set(user, [msg]);
+            return;
+        }
+        userRes.push(msg);
     }
     debug() {
         console.log(this.events);

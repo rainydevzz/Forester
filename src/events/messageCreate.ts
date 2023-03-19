@@ -1,7 +1,10 @@
 import { EmbedBuilder, Message, TextChannel, userMention } from "discord.js";
+import { MyClient } from "../bot";
 
 export const name = 'messageCreate';
-export const run = async (message: Message) => {
+export const run = async (message: Message, bot: MyClient) => {
+    if(message.author.bot) return;
+    bot.addMessage(message.id, message.author.id, message.guild.id);
     if(message.content.startsWith(userMention(message.client.user.id))) {
         const embed = new EmbedBuilder()
             .setTitle("Hello!")

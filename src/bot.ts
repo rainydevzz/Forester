@@ -1,4 +1,4 @@
-import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client, User } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandOptionChoiceData, AutocompleteInteraction, Client, TextChannel, User } from 'discord.js';
 import { readdirSync, lstatSync } from 'fs';
 import path from 'path';
 import { CooldownOptions, EventOptions } from './types';
@@ -12,6 +12,7 @@ export class MyClient extends Client {
     components: Map<string, Function> = new Map();
     db: PrismaClient = new PrismaClient();
     cooldown: Map<string, CooldownOptions[]> = new Map();
+    messageMap: Map<string, Map<string, string[]>> = new Map();
 
     async syncCommands() {
         await this.application?.commands.set(this.collectCommands()[0]);
@@ -136,6 +137,67 @@ export class MyClient extends Client {
         return i;
     }
 
+    async getLevelChannel(guild: string) {
+        return (await this.db.levelsys.findFirst({where: {guild: guild}})).channel;
+    }
+
+    async upsertLevel(user: string, guild: string, xp?: number): Promise<boolean> {
+        const res = await this.db.levels.findMany({where: {AND: {user: user, guild: guild}}});
+        if(!res[0]) {
+            await this.db.levels.create({data: {
+                user: user,
+                guild: guild,
+                level: 0,
+                xp: 0,
+                id: this.genString()
+            }});
+            return false;
+        } else {
+            if(!xp) xp = 0;
+            if(xp + res[0].xp >= 100) {
+                await this.db.levels.updateMany({where: {AND: {guild: guild, user: user}}, data: {
+                    level: {increment: 1},
+                    xp: 0
+                }});
+                return true;
+            }
+            await this.db.levels.updateMany({where: {AND: {user: user, guild: guild}}, data: {
+                xp: {increment: xp}
+            }});
+            return false;
+        }
+    }
+
+    async doLevels() {
+        while(true) {
+            const a = await this.awardXP();
+            await this.sendLevelUp(a);
+            await new Promise(r => setTimeout(r, 60000));
+        }
+    }
+
+    async awardXP() {
+        let arr: [string, string][] = [];
+        for(const g of this.messageMap.keys()) {
+            for(const u of this.messageMap.get(g).keys()) {
+                const l = await this.upsertLevel(u, g, this.messageMap.get(g).get(u).length)
+                if(l) {
+                    arr.push([u, g]);
+                }
+            }
+        }
+        this.messageMap = new Map();
+        return arr;
+    }
+
+    async sendLevelUp(arr: [string, string][]) {
+        for(const i in arr) {
+            const user = this.users.cache.get(arr[i][0]);
+            const channel = this.channels.cache.get(await this.getLevelChannel(arr[i][1])) as TextChannel;
+            await channel.send(`GG ${user.tag}, you advanced a level!`);
+        }
+    }
+
     collectCommands(): [ApplicationCommandData[], this] {
         let cmds: ApplicationCommandData[] = [];
         const dir = path.join(__dirname, 'commands');
@@ -226,6 +288,20 @@ export class MyClient extends Client {
             user.push(data);
             return [true];
         }
+    }
+
+    addMessage(msg: string, user: string, guild: string): void {
+        const guildRes = this.messageMap.get(guild);
+        if(!guildRes) {
+            this.messageMap.set(guild, new Map().set(user, [msg]));
+            return;
+        }
+        const userRes = guildRes.get(user);
+        if(!userRes) {
+            guildRes.set(user, [msg]);
+            return;
+        }
+        userRes.push(msg);
     }
 
     debug() {

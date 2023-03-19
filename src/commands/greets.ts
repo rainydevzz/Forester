@@ -6,6 +6,7 @@ export const command: ApplicationCommandData = {
     name: 'greets',
     description: 'greet message commands',
     type: ApplicationCommandType.ChatInput,
+    defaultMemberPermissions: ["ManageGuild"],
     options: [
         {
             name: 'welcome',
