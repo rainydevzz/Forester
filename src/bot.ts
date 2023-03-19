@@ -205,7 +205,7 @@ export class MyClient extends Client {
             if(!res[i]) break;
             const userCheck = this.users.cache.get(res[i].user);
             if(!userCheck) {
-                await this.db.levels.deleteMany({where: {guild: guild, user: res[i].user}});
+                await this.db.levels.deleteMany({where: {AND: {guild: guild, user: res[i].user}}});
                 i = 0;
                 arr = [];
                 continue;

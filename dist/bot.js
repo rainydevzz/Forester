@@ -193,7 +193,7 @@ class MyClient extends discord_js_1.Client {
                 break;
             const userCheck = this.users.cache.get(res[i].user);
             if (!userCheck) {
-                await this.db.levels.deleteMany({ where: { guild: guild, user: res[i].user } });
+                await this.db.levels.deleteMany({ where: { AND: { guild: guild, user: res[i].user } } });
                 i = 0;
                 arr = [];
                 continue;
