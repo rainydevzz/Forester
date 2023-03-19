@@ -197,13 +197,13 @@ class MyClient extends discord_js_1.Client {
         arr.sort((a, b) => b[1] - a[1]);
         return arr;
     }
-    doLevelLB(arr) {
+    doLevelLB(arr, guild) {
         let fields = [];
         for (const i of arr) {
-            const user = this.users.cache.get(i[0]);
+            const user = this.guilds.cache.get(guild).members.cache.get(i[0]);
             if (!user)
                 continue;
-            fields.push({ name: `${arr.indexOf(i) + 1}. ${user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}` });
+            fields.push({ name: `${arr.indexOf(i) + 1}. ${user.user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}` });
         }
         const embed = new discord_js_1.EmbedBuilder()
             .setTitle(`Leaderboard!`)

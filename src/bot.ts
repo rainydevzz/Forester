@@ -210,12 +210,12 @@ export class MyClient extends Client {
         return arr;
     }
 
-    doLevelLB(arr: [string, number, number][]) {
+    doLevelLB(arr: [string, number, number][], guild: string) {
         let fields = [];
         for(const i of arr) {
-            const user = this.users.cache.get(i[0]);
+            const user = this.guilds.cache.get(guild).members.cache.get(i[0]);
             if(!user) continue;
-            fields.push({name: `${arr.indexOf(i) + 1}. ${user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}`});
+            fields.push({name: `${arr.indexOf(i) + 1}. ${user.user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}`});
         }
         const embed = new EmbedBuilder()
             .setTitle(`Leaderboard!`)

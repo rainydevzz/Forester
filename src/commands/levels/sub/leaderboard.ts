@@ -3,6 +3,6 @@ import { MyClient } from "../../../bot";
 
 export const leaderboard = async (interaction: ChatInputCommandInteraction, bot: MyClient) => {
     const users = await bot.getTotalXP(interaction.guildId);
-    const embed = bot.doLevelLB(users);
+    const embed = bot.doLevelLB(users, interaction.guildId);
     return embed;
 }
