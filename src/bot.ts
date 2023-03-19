@@ -311,6 +311,9 @@ export class MyClient extends Client {
             this.cooldown.set(id, [data]);
             return [true];
         }
+        if(user.length == 0) {
+            return [true];
+        }
         const cmd = user.find(c => c.command == command);
         if(!cmd) {
             user.push(data);

@@ -188,8 +188,8 @@ class MyClient extends discord_js_1.Client {
     async getTotalXP(guild) {
         let arr = [];
         let res = await this.db.levels.findMany({ where: { guild: guild } });
+        const members = await this.guilds.cache.get(guild).members.fetch();
         for (const i of res) {
-            const members = await this.guilds.cache.get(guild).members.fetch();
             const userCheck = members.get(i.user);
             if (!userCheck) {
                 await this.db.levels.deleteMany({ where: { AND: { guild: guild, user: i.user } } });
@@ -291,6 +291,9 @@ class MyClient extends discord_js_1.Client {
         const data = { timestamp: new Date().getTime(), cooldown: cooldown, command: command };
         if (!user) {
             this.cooldown.set(id, [data]);
+            return [true];
+        }
+        if (user.length == 0) {
             return [true];
         }
         const cmd = user.find(c => c.command == command);
