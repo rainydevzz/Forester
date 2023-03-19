@@ -312,6 +312,7 @@ export class MyClient extends Client {
             return [true];
         }
         if(user.length == 0) {
+            user.push(data);
             return [true];
         }
         const cmd = user.find(c => c.command == command);
