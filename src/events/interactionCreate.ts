@@ -11,7 +11,7 @@ export const run = async (interaction: BaseInteraction, bot: MyClient) => {
         } catch(err) {
             const embed = new EmbedBuilder()
                 .setTitle("Uh Oh, Error!")
-                .setDescription(`\`\`\`\n${err.message}\`\`\``)
+                .setDescription(`\`\`\`\n${err}\`\`\``)
                 .setColor("Red");
             logger.error({ERROR: err});
             await interaction.followUp({embeds: [embed]});

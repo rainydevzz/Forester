@@ -13,7 +13,7 @@ const run = async (interaction, bot) => {
         catch (err) {
             const embed = new discord_js_1.EmbedBuilder()
                 .setTitle("Uh Oh, Error!")
-                .setDescription(`\`\`\`\n${err.message}\`\`\``)
+                .setDescription(`\`\`\`\n${err}\`\`\``)
                 .setColor("Red");
             logger_1.logger.error({ ERROR: err });
             await interaction.followUp({ embeds: [embed] });
