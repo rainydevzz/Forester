@@ -214,6 +214,7 @@ export class MyClient extends Client {
         let fields = [];
         for(const i of arr) {
             const user = this.users.cache.get(i[0]);
+            if(!user) continue;
             fields.push({name: `${arr.indexOf(i) + 1}. ${user.tag}`, value: `Level ${i[2]} - Total XP ${i[1]}`});
         }
         const embed = new EmbedBuilder()
