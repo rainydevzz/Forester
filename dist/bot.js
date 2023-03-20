@@ -297,6 +297,7 @@ class MyClient extends discord_js_1.Client {
             user.push(data);
             return [true];
         }
+        console.log(user);
         const cmd = user.find(c => c.command == command);
         if (!cmd) {
             user.push(data);
@@ -307,8 +308,8 @@ class MyClient extends discord_js_1.Client {
             return [false, num];
         }
         else {
-            delete user[user.indexOf(cmd)];
             user.push(data);
+            user.splice(user.indexOf(cmd), 1);
             return [true];
         }
     }

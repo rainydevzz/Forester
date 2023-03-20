@@ -315,6 +315,7 @@ export class MyClient extends Client {
             user.push(data);
             return [true];
         }
+        console.log(user);
         const cmd = user.find(c => c.command == command);
         if(!cmd) {
             user.push(data);
@@ -324,8 +325,8 @@ export class MyClient extends Client {
             let num = Math.floor((data.cooldown - (data.timestamp - cmd.timestamp)) / 60000);
             return [false, num];
         } else {
-            delete user[user.indexOf(cmd)];
             user.push(data);
+            user.splice(user.indexOf(cmd), 1);
             return [true];
         }
     }
