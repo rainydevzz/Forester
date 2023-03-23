@@ -180,7 +180,7 @@ export class MyClient extends Client {
         let arr: [string, string][] = [];
         for(const g of this.messageMap.keys()) {
             for(const u of this.messageMap.get(g).keys()) {
-                const l = await this.upsertLevel(u, g, this.messageMap.get(g).get(u).length)
+                const l = await this.upsertLevel(u, g, Math.floor((Math.random() + 1) * (this.messageMap.get(g).get(u).length)));
                 if(l) {
                     arr.push([u, g]);
                 }
